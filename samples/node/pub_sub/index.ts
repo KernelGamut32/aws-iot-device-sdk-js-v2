@@ -99,6 +99,16 @@ yargs.command('*', false, (yargs: any) => {
             default: 'none',
             choices: ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'none']
         })
+        .option('interval', {
+            description: 'Frequency of communication in milliseconds',
+            type: 'number',
+            default: 1000
+        })
+        .option('deviceName', {
+            description: 'Name of device sending info',
+            type: 'string',
+            default: ''
+        })
         .help()
         .alias('help', 'h')
         .showHelpOnFail(false)
@@ -123,13 +133,18 @@ async function execute_session(connection: mqtt.MqttClientConnection, argv: Args
             for (let op_idx = 0; op_idx < argv.count; ++op_idx) {
                 const publish = async () => {
                     const msg = {
+                        device_name: argv.deviceName,
                         message: argv.message,
+                        temperature: 70.3,
+                        additionalData: {
+                            humidity: 0.57
+                        },
                         sequence: op_idx + 1,
                     };
                     const json = JSON.stringify(msg);
                     connection.publish(argv.topic, json, mqtt.QoS.AtLeastOnce);
                 }
-                setTimeout(publish, op_idx * 1000);
+                setTimeout(publish, op_idx * argv.interval);
             }
         }
         catch (error) {
