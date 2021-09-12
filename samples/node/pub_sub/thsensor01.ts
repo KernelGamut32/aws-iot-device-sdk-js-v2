@@ -122,29 +122,26 @@ async function execute_session(connection: mqtt.MqttClientConnection, argv: Args
                 const json = decoder.decode(payload);
                 console.log(`Publish received. topic:"${topic}" dup:${dup} qos:${qos} retain:${retain}`);
                 console.log(json);
-                const message = JSON.parse(json);
-                if (message.sequence == argv.count) {
-                    resolve();
-                }
             }
 
             await connection.subscribe(argv.topic, mqtt.QoS.AtLeastOnce, on_publish);
 
-            for (let op_idx = 0; op_idx < argv.count; ++op_idx) {
+            let op_idx = 0;
+            while (true) {
+                op_idx++;
                 const publish = async () => {
                     const msg = {
-                        device_name: argv.deviceName,
-                        message: argv.message,
-                        temperature: 70.3,
-                        additionalData: {
-                            humidity: 0.57
+                        device_name: "THSensor01",
+                        readings: {
+                            temperature: op_idx % 10 == 0 ? 89 : 72,
+                            humidity: 0.55
                         },
-                        sequence: op_idx + 1,
+                        timestamp: new Date(),
                     };
                     const json = JSON.stringify(msg);
                     connection.publish(argv.topic, json, mqtt.QoS.AtLeastOnce);
                 }
-                setTimeout(publish, op_idx * argv.interval);
+                setTimeout(publish, op_idx * 5000);
             }
         }
         catch (error) {
