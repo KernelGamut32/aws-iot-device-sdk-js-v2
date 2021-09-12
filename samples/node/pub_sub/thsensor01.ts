@@ -122,14 +122,15 @@ async function execute_session(connection: mqtt.MqttClientConnection, argv: Args
                 const json = decoder.decode(payload);
                 console.log(`Publish received. topic:"${topic}" dup:${dup} qos:${qos} retain:${retain}`);
                 console.log(json);
-                resolve(null);
+                const message = JSON.parse(json);
+                if (message.sequence == 1000) {
+                    resolve(null);
+                }
             }
 
             await connection.subscribe(argv.topic, mqtt.QoS.AtLeastOnce, on_publish);
 
-            let op_idx = 0;
-            while (true) {
-                op_idx++;
+            for (let op_idx = 0; op_idx < 1000; ++op_idx)  {
                 const publish = async () => {
                     const msg = {
                         device_name: "THSensor01",
