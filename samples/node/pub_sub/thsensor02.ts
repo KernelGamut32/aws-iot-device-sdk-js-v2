@@ -136,6 +136,7 @@
                          device_name: "THSensor02",
                          measurements: {
                              temp: (op_idx + 1) % 15 == 0 ? 31.1 : 19.4,
+                             units: "C",
                              hum: 0.55
                          },
                          timestamp: new Date(),

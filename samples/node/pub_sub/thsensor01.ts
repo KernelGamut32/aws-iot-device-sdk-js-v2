@@ -136,6 +136,7 @@ async function execute_session(connection: mqtt.MqttClientConnection, argv: Args
                         device_name: "THSensor01",
                         readings: {
                             temperature: (op_idx + 1) % 10 == 0 ? 89 : 72,
+                            units: "F",
                             humidity: 0.55
                         },
                         timestamp: new Date(),

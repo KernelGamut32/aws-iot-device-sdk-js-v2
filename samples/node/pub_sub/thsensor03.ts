@@ -135,6 +135,7 @@
                      const msg = {
                          device_name: "THSensor03",
                          tempdata: 68,
+                         units: "F",
                          timestamp: new Date(),
                      };
                      const json = JSON.stringify(msg);
